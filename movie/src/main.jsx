@@ -10,8 +10,6 @@ import Home from "./pages/Home.jsx";
 import Movies from "./pages/movies/Movies.jsx";
 import Shows from "./pages/shows/Shows.jsx";
 import Search from "./pages/search/Search.jsx";
-import MovieDetail from "./pages/movies/MovieDetail.jsx";
-import ShowDetail from "./pages/shows/ShowDetail.jsx";
 import DetailsPage from "./pages/DetailsPage.jsx";
 
 const router = createBrowserRouter([
@@ -35,14 +33,7 @@ const router = createBrowserRouter([
         path: ROUTER.Search,
         element: <Search />,
       },
-      // {
-      //   path: ROUTER.MovieDetail + "/:id",
-      //   element: <MovieDetail />,
-      // },
-      // {
-      //   path: ROUTER.ShowDetail + "/:id",
-      //   element: <ShowDetail />,
-      // },
+
       {
         path: "/:type/:id",
         element: <DetailsPage />,

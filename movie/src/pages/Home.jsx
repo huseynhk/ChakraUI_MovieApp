@@ -29,6 +29,8 @@ const Home = () => {
       });
   }, [timeWindow]);
 
+  
+
   return (
     <Container maxW={"container.xl"}>
       <Flex alignItems={"baseline"} my={"7"} gap={"5"}>
