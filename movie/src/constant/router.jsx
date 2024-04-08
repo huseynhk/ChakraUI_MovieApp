@@ -5,4 +5,6 @@ export const ROUTER = {
   Shows: "/shows",
   Search: "/search",
   WatchhList: "/watch",
+  MovieDetail: "/moviedetail",
+  ShowDetail: "/showdetail",
 };

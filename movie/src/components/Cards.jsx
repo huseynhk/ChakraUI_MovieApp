@@ -6,7 +6,7 @@ import { ROUTER } from "../constant/router";
 
 const Cards = ({ item, type }) => {
   return (
-    <Link>
+    <Link to={`/${type}/${item?.id}`}>
       <Box
         position={"relative"}
         transform={"scale(1)"}
@@ -36,13 +36,21 @@ const Cards = ({ item, type }) => {
           opacity={"0"}
           transition={"opacity .7s ease-in-out"}
         >
-          <Text textAlign={"center"} mt="1" fontSize='20px' color={"blue.200"} >{item?.title || item?.name}</Text>
-          <Text textAlign={"center"} my="2" fontSize='xl' color={"green.200"}>
+          <Text textAlign={"center"} mt="1" fontSize="20px" color={"blue.200"}>
+            {item?.title || item?.name}
+          </Text>
+          <Text textAlign={"center"} my="2" fontSize="xl" color={"green.200"}>
             {new Date(
               item?.release_date || item?.first_air_date
             ).getFullYear() || "N/A"}
           </Text>
-          <Flex alignItems={"center"} justifyContent={"center"} gap={2} mb="2" color={"cyan.200"}>
+          <Flex
+            alignItems={"center"}
+            justifyContent={"center"}
+            gap={2}
+            mb="2"
+            color={"cyan.200"}
+          >
             <StarIcon fontSize={"medium"} />
             <Text>{item?.vote_average?.toFixed(1)}</Text>
           </Flex>
