@@ -10,7 +10,9 @@ const styles = {
     body: {
       bg: mode(
         props.theme.semanticTokens.colors["chakra-body-bg"]._light,
-        "blackAlpha.900"
+        "blackAlpha.900",
+        props.theme.semanticTokens.colors["chakra-body-bg"]._dark,
+        "gray.200"
       )(props),
     },
   }),

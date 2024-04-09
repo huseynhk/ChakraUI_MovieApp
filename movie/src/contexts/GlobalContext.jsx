@@ -7,6 +7,7 @@ const GlobalContextProvider = ({ children }) => {
   const [activePage, setActivePage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [sortBy, setSortBy] = useState("popularity.desc");
+  
 
   const contextValue = {
     activePage,

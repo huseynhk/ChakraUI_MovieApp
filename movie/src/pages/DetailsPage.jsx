@@ -33,28 +33,19 @@ import {
   fetchCredits,
   fetchVideos,
 } from "../services/api";
+import { useColorMode } from "@chakra-ui/react";
 
 const DetailsPage = () => {
   const { type, id } = useParams();
+  const { colorMode } = useColorMode();
   const toast = useToast();
+
   const [details, setDetails] = useState({});
   const [loading, setLoading] = useState(true);
   const [isInWatchlist, setIsInWatchlist] = useState(false);
   const [cast, setCast] = useState([]);
   const [video, setVideo] = useState(null);
   const [videos, setVideos] = useState([]);
-
-  // useEffect(() => {
-  //   fetchDetails(type, id)
-  //     .then((res) => {
-  //       console.log("res", res);
-  //       setDetails(res);
-  //     })
-  //     .catch((err) => {
-  //       console.log("err", err);
-  //     })
-  //     .finally(() => setLoading(false));
-  // }, [type, id]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -110,12 +101,16 @@ const DetailsPage = () => {
   return (
     <Box>
       <Box
-        background={`linear-gradient(rgba(0,0,0,.80), rgba(0,0,0,.80)), url(${imagePathOriginal}/${details?.backdrop_path})`}
+        background={`linear-gradient(rgba(0,0,0,${
+          colorMode === "dark" ? 0.8 : 0.4
+        }), rgba(0,0,0,${
+          colorMode === "dark" ? 0.8 : 0.4
+        })), url(${imagePathOriginal}/${details?.backdrop_path})`}
         backgroundRepeat={"no-repeat"}
         backgroundSize={"cover"}
         backgroundPosition={"center"}
         w={"100%"}
-        h={{ base: "auto", md: "70vh" }}
+        h={{ base: "auto", md: "75vh" }}
         py={"2"}
         zIndex={"-1"}
         display={"flex"}
@@ -134,17 +129,25 @@ const DetailsPage = () => {
               alt={details?.title || details?.name}
             />
             <Box>
-              <Heading fontSize={"3xl"}>
-                {details?.title || details?.name}
-                <Text as="span" fontWeight={"normal"} color={"gray.300"} ml={3}>
+              <Heading fontSize={"3xl"} color={colorMode === "light" ? "gray.300" : "cyan.300"}>
+                <Text  as="span" >
+                  {details?.title || details?.name}
+                </Text>
+
+                <Text
+                  as="span"
+                  fontWeight={"normal"}
+                  
+                  ml={3}
+                >
                   {new Date(releaseDate).getFullYear()}
                 </Text>
               </Heading>
 
-              <Flex alignItems={"center"} gap={4} mt={1} mb={5}>
+              <Flex alignItems={"center"} gap={4} mt={1} mb={5} color={colorMode === "light" ? "gray.300" : "cyan.300"}>
                 <Flex alignItems={"center"}>
-                  <CalendarIcon mr={2} color={"sky.300"} />
-                  <Text as="span" fontWeight={"sm"} color={"gray.300"} ml={3}>
+                  <CalendarIcon mr={2}  />
+                  <Text as="span" fontWeight={"sm"}  ml={3}>
                     {new Date(releaseDate).toLocaleDateString("en-US")} (US)
                   </Text>
                   {type === "movie" && (
@@ -169,7 +172,7 @@ const DetailsPage = () => {
                   color={resolveRatingColor(details?.vote_average)}
                   thickness={"6px"}
                 >
-                  <CircularProgressLabel fontSize={"lg"}>
+                  <CircularProgressLabel fontSize={"lg"} color={"white"}>
                     {ratingToPercentage(details?.vote_average)}{" "}
                     <Box as="span" fontSize={"10px"}>
                       %
@@ -179,6 +182,8 @@ const DetailsPage = () => {
                 <Text
                   textTransform={"capitalize"}
                   display={{ base: "none", md: "initial" }}
+                  color={colorMode === "light" ? "white" : "green.300"}
+
                 >
                   user score
                 </Text>
@@ -213,17 +218,19 @@ const DetailsPage = () => {
               >
                 {details?.tagline}
               </Text>
-              <Heading fontSize={"xl"} mb={"3"}>
+              <Heading fontSize={"xl"} mb={"3"} color={colorMode === "light" ? "gray.300" : "cyan.300"}>
                 Overview
               </Heading>
-              <Text fontSize={"md"} mb={"3"}>
+              <Text fontSize={"md"} mb={"3"} color={colorMode === "light" ? "gray.300" : "cyan.300"}>
                 {details?.overview}
               </Text>
-              <Flex mt="6" gap="2">
+                    
+              <Flex mt="6" gap="2" >
                 {details?.genres?.map((genre) => (
                   <Badge
                     key={genre?.id}
-                    color={"red.300"}
+                    color={colorMode === "light" ? "red.700" : "cyan.300"}
+                    bg={colorMode === "light" ? "red.200" : "gray.800"}
                     borderRadius={"3"}
                     px="2"
                     py="1"

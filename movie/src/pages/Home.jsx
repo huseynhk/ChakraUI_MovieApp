@@ -10,9 +10,12 @@ import {
 import { fetchTrending } from "../services/api";
 import Cards from "../components/Cards";
 import { useGlobalContext } from "../contexts/GlobalContext";
+import { useColorMode } from "@chakra-ui/react";
 
 const Home = () => {
   const { isLoading, setIsLoading } = useGlobalContext();
+  const { colorMode } = useColorMode();
+
   const [data, setData] = useState([]);
   const [timeWindow, setTimeWindow] = useState("day");
 
@@ -30,6 +33,8 @@ const Home = () => {
       });
   }, [timeWindow]);
 
+  const mode = colorMode === "light" ? "red.200" : "red.700";
+
   return (
     <Container maxW={"container.xl"}>
       <Flex alignItems={"baseline"} my={"7"} gap={"5"}>
@@ -40,7 +45,7 @@ const Home = () => {
         <Flex
           alignItems={"center"}
           gap={"5"}
-          border={"2px solid teal"}
+          border={"2px solid red"}
           borderRadius={"20px"}
         >
           <Box
@@ -48,8 +53,9 @@ const Home = () => {
             borderRadius={"20px"}
             py="1"
             px="3"
-            bg={`${timeWindow === "day" ? "teal.700" : ""}`}
+            bg={`${timeWindow === "day" ? mode : ""}`}
             onClick={() => setTimeWindow("day")}
+            fontWeight={"bold"}
           >
             Today
           </Box>
@@ -58,8 +64,10 @@ const Home = () => {
             borderRadius={"20px"}
             py="1"
             px="3"
-            bg={`${timeWindow === "week" ? "teal.700" : ""}`}
+            bg={`${timeWindow === "week" ? mode : ""}`}
             onClick={() => setTimeWindow("week")}
+            fontWeight={"bold"}
+
           >
             This Week
           </Box>
@@ -77,7 +85,7 @@ const Home = () => {
       >
         {data &&
           data?.map((item, index) =>
-          isLoading ? (
+            isLoading ? (
               <Skeleton height={300} key={index} />
             ) : (
               <Cards key={item?.id} item={item} type={item?.media_type} />

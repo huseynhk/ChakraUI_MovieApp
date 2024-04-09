@@ -13,6 +13,7 @@ import Cards from "../../components/Cards";
 import PaginationComponent from "../../components/PaginationComponent";
 import { useGlobalContext } from "../../contexts/GlobalContext";
 
+
 const Movies = () => {
   const {
     activePage,
@@ -24,6 +25,7 @@ const Movies = () => {
     isLoading,
     setIsLoading,
   } = useGlobalContext();
+
   const [movies, setMovies] = useState([]);
 
   useEffect(() => {
