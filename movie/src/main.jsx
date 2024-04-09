@@ -11,6 +11,7 @@ import Movies from "./pages/movies/Movies.jsx";
 import Shows from "./pages/shows/Shows.jsx";
 import Search from "./pages/search/Search.jsx";
 import DetailsPage from "./pages/DetailsPage.jsx";
+import { GlobalContextProvider } from "./contexts/GlobalContext.jsx";
 
 const router = createBrowserRouter([
   {
@@ -44,9 +45,11 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <>
-    <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-    <ChakraProvider theme={theme}>
-      <RouterProvider router={router} />
-    </ChakraProvider>
+    <GlobalContextProvider>
+      <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+      <ChakraProvider theme={theme}>
+        <RouterProvider router={router} />
+      </ChakraProvider>
+    </GlobalContextProvider>
   </>
 );

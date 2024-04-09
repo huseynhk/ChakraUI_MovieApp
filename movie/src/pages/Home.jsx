@@ -9,14 +9,15 @@ import {
 } from "@chakra-ui/react";
 import { fetchTrending } from "../services/api";
 import Cards from "../components/Cards";
+import { useGlobalContext } from "../contexts/GlobalContext";
 
 const Home = () => {
+  const { isLoading, setIsLoading } = useGlobalContext();
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [timeWindow, setTimeWindow] = useState("day");
 
   useEffect(() => {
-    setLoading(true);
+    setIsLoading(true);
     fetchTrending(timeWindow)
       .then((res) => {
         setData(res);
@@ -25,11 +26,9 @@ const Home = () => {
         console.log(err, "err");
       })
       .finally(() => {
-        setLoading(false);
+        setIsLoading(false);
       });
   }, [timeWindow]);
-
-  
 
   return (
     <Container maxW={"container.xl"}>
@@ -78,7 +77,7 @@ const Home = () => {
       >
         {data &&
           data?.map((item, index) =>
-            loading ? (
+          isLoading ? (
               <Skeleton height={300} key={index} />
             ) : (
               <Cards key={item?.id} item={item} type={item?.media_type} />
