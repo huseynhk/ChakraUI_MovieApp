@@ -34,10 +34,15 @@ import {
   fetchVideos,
 } from "../services/api";
 import { useColorMode } from "@chakra-ui/react";
+import { useGlobalContext } from "../contexts/GlobalContext";
+import { useFirestore } from "../services/firestore";
 
 const DetailsPage = () => {
   const { type, id } = useParams();
   const { colorMode } = useColorMode();
+  const { user } = useGlobalContext();
+  const { addToWatchlist, checkIfInWatchlist, removeFromWatchlist } =
+    useFirestore();
   const toast = useToast();
 
   const [details, setDetails] = useState({});
@@ -46,6 +51,49 @@ const DetailsPage = () => {
   const [cast, setCast] = useState([]);
   const [video, setVideo] = useState(null);
   const [videos, setVideos] = useState([]);
+
+  const handleSaveToWatchlist = async () => {
+    if (!user) {
+      toast({
+        title: "Login to add to watchlist",
+        status: "error",
+        isClosable: true,
+      });
+      return;
+    }
+
+    const data = {
+      id: details?.id,
+      title: details?.title || details?.name,
+      type: type,
+      poster_path: details?.poster_path,
+      release_date: details?.release_date || details?.first_air_date,
+      vote_average: details?.vote_average,
+      overview: details?.overview,
+    };
+
+    const dataId = details?.id?.toString();
+    await addToWatchlist(user?.uid, dataId, data);
+    const isSetToWatchlist = await checkIfInWatchlist(user?.uid, dataId);
+    setIsInWatchlist(isSetToWatchlist);
+  };
+
+  useEffect(() => {
+    if (!user) {
+      setIsInWatchlist(false);
+      return;
+    }
+
+    checkIfInWatchlist(user?.uid, id).then((data) => {
+      setIsInWatchlist(data);
+    });
+  }, [id, user, checkIfInWatchlist]);
+
+  const handleRemoveFromWatchlist = async () => {
+    await removeFromWatchlist(user?.uid, id);
+    const isSetToWatchlist = await checkIfInWatchlist(user?.uid, id);
+    setIsInWatchlist(isSetToWatchlist);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -68,7 +116,7 @@ const DetailsPage = () => {
         // Set cast
         setCast(creditsData?.cast?.slice(0, 15));
 
-        // Set video/s
+        // Set videos
         const video = videosData?.results?.find(
           (video) => video?.type === "Trailer"
         );
@@ -129,25 +177,27 @@ const DetailsPage = () => {
               alt={details?.title || details?.name}
             />
             <Box>
-              <Heading fontSize={"3xl"} color={colorMode === "light" ? "gray.300" : "cyan.300"}>
-                <Text  as="span" >
-                  {details?.title || details?.name}
-                </Text>
+              <Heading
+                fontSize={"3xl"}
+                color={colorMode === "light" ? "gray.300" : "cyan.300"}
+              >
+                <Text as="span">{details?.title || details?.name}</Text>
 
-                <Text
-                  as="span"
-                  fontWeight={"normal"}
-                  
-                  ml={3}
-                >
+                <Text as="span" fontWeight={"normal"} ml={3}>
                   {new Date(releaseDate).getFullYear()}
                 </Text>
               </Heading>
 
-              <Flex alignItems={"center"} gap={4} mt={1} mb={5} color={colorMode === "light" ? "gray.300" : "cyan.300"}>
+              <Flex
+                alignItems={"center"}
+                gap={4}
+                mt={1}
+                mb={5}
+                color={colorMode === "light" ? "gray.300" : "cyan.300"}
+              >
                 <Flex alignItems={"center"}>
-                  <CalendarIcon mr={2}  />
-                  <Text as="span" fontWeight={"sm"}  ml={3}>
+                  <CalendarIcon mr={2} />
+                  <Text as="span" fontWeight={"sm"} ml={3}>
                     {new Date(releaseDate).toLocaleDateString("en-US")} (US)
                   </Text>
                   {type === "movie" && (
@@ -183,18 +233,16 @@ const DetailsPage = () => {
                   textTransform={"capitalize"}
                   display={{ base: "none", md: "initial" }}
                   color={colorMode === "light" ? "white" : "green.300"}
-
                 >
                   user score
                 </Text>
                 {isInWatchlist ? (
                   <Button
-                    display={"none"}
                     colorScheme="green"
                     variant={"outline"}
                     textTransform={"capitalize"}
                     leftIcon={<CheckCircleIcon />}
-                    onClick={() => console.log("click")}
+                    onClick={handleRemoveFromWatchlist}
                   >
                     in watchlist
                   </Button>
@@ -204,7 +252,7 @@ const DetailsPage = () => {
                     variant={"outline"}
                     textTransform={"capitalize"}
                     leftIcon={<SmallAddIcon />}
-                    onClick={() => console.log("click")}
+                    onClick={handleSaveToWatchlist}
                   >
                     add to watchlist
                   </Button>
@@ -218,14 +266,22 @@ const DetailsPage = () => {
               >
                 {details?.tagline}
               </Text>
-              <Heading fontSize={"xl"} mb={"3"} color={colorMode === "light" ? "gray.300" : "cyan.300"}>
+              <Heading
+                fontSize={"xl"}
+                mb={"3"}
+                color={colorMode === "light" ? "gray.300" : "cyan.300"}
+              >
                 Overview
               </Heading>
-              <Text fontSize={"md"} mb={"3"} color={colorMode === "light" ? "gray.300" : "cyan.300"}>
+              <Text
+                fontSize={"md"}
+                mb={"3"}
+                color={colorMode === "light" ? "gray.300" : "cyan.300"}
+              >
                 {details?.overview}
               </Text>
-                    
-              <Flex mt="6" gap="2" >
+
+              <Flex mt="6" gap="2">
                 {details?.genres?.map((genre) => (
                   <Badge
                     key={genre?.id}

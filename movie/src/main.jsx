@@ -11,7 +11,9 @@ import Movies from "./pages/movies/Movies.jsx";
 import Shows from "./pages/shows/Shows.jsx";
 import Search from "./pages/search/Search.jsx";
 import DetailsPage from "./pages/DetailsPage.jsx";
+import WatchList from "./pages/WatchList.jsx";
 import { GlobalContextProvider } from "./contexts/GlobalContext.jsx";
+import Protected from "./routes/Protected.jsx";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +40,15 @@ const router = createBrowserRouter([
       {
         path: "/:type/:id",
         element: <DetailsPage />,
+      },
+
+      {
+        path: ROUTER.WatchhList,
+        element: (
+          <Protected>
+            <WatchList />
+          </Protected>
+        ),
       },
     ],
   },

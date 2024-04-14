@@ -3,7 +3,6 @@ import {
   Box,
   Container,
   Flex,
-  Button,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -11,16 +10,32 @@ import {
   DrawerHeader,
   DrawerOverlay,
   IconButton,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Avatar,
   useDisclosure,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { ROUTER } from "../constant/router";
 import { HamburgerIcon, SearchIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
 import { useColorMode } from "@chakra-ui/react";
+import { useGlobalContext } from "../contexts/GlobalContext";
 
 const Navbar = () => {
+  const { user, signInWithGoogle, logout } = useGlobalContext();
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const handleGoogleLogin = async () => {
+    try {
+      await signInWithGoogle();
+      console.log("success");
+    } catch (error) {
+      console.log("errr", error);
+    }
+  };
 
   return (
     <Box py={4} mb={2}>
@@ -40,21 +55,51 @@ const Navbar = () => {
 
           {/* Desktop */}
           <Flex
-            gap={"4"}
+            gap={"6"}
             items={"center"}
             display={{ base: "none", md: "flex" }}
+            height={"100%"}
           >
             <Box onClick={toggleColorMode} className="pointer">
               {colorMode === "light" ? (
-                <MoonIcon boxSize={6} />
-              ) : (
                 <SunIcon boxSize={6} />
+              ) : (
+                <MoonIcon boxSize={6} />
               )}
             </Box>
             <Link to={ROUTER.Home}>Home</Link>
             <Link to={ROUTER.Movies}>Movies</Link>
             <Link to={ROUTER.Shows}>TV Shows</Link>
-            <Link to={ROUTER.Search}>Search</Link>
+            <Link to={ROUTER.Search}>
+              <SearchIcon fontSize={"xl"} />
+            </Link>
+            {user && (
+              <Menu>
+                <MenuButton>
+                  <Avatar
+                    bg={"red.500"}
+                    color={"white"}
+                    size={"sm"}
+                    name={user?.email}
+                  />
+                </MenuButton>
+                <MenuList>
+                  <Link to={ROUTER.WatchhList}>
+                    <MenuItem>Watchlist</MenuItem>
+                  </Link>
+                  <MenuItem onClick={logout}>Logout</MenuItem>
+                </MenuList>
+              </Menu>
+            )}
+
+            {!user && (
+              <Avatar
+                size={"sm"}
+                bg={"gray.700"}
+                as="button"
+                onClick={handleGoogleLogin}
+              />
+            )}
           </Flex>
 
           {/* Mobile */}
@@ -68,9 +113,9 @@ const Navbar = () => {
             </Link>
             <Box onClick={toggleColorMode} className="pointer">
               {colorMode === "light" ? (
-                <MoonIcon boxSize={6} />
-              ) : (
                 <SunIcon boxSize={6} />
+              ) : (
+                <MoonIcon boxSize={6} />
               )}
             </Box>
             <IconButton onClick={onOpen} icon={<HamburgerIcon />} />
@@ -78,7 +123,23 @@ const Navbar = () => {
               <DrawerOverlay />
               <DrawerContent bg={colorMode === "light" ? "gray.300" : "black"}>
                 <DrawerCloseButton />
-                <DrawerHeader></DrawerHeader>
+                <DrawerHeader>
+                  {user ? (
+                    <Flex alignItems="center" gap="2">
+                      <Avatar bg="red.500" size={"sm"} name={user?.email} />
+                      <Box fontSize={"sm"}>
+                        {user?.displayName || user?.email}
+                      </Box>
+                    </Flex>
+                  ) : (
+                    <Avatar
+                      size={"sm"}
+                      bg="gray.700"
+                      as="button"
+                      onClick={handleGoogleLogin}
+                    />
+                  )}
+                </DrawerHeader>
 
                 <DrawerBody>
                   <Flex flexDirection={"column"} gap={"4"} onClick={onClose}>
